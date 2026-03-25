@@ -68,9 +68,9 @@ async function executeVoteWithProxy(voteType) {
     // Step 2: Create connection
     console.log("Step 2: Creating RPC connection...");
     const connection = new window.solanaWeb3.Connection(
-      ""https://api.mainnet-beta.solana.com"",
-      "confirmed"
-    );
+  "https://api.mainnet-beta.solana.com",
+  "confirmed"
+  );
 
     // Step 3: Build proxy transaction
     console.log("Step 3: Building proxy transaction...");
