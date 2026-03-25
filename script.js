@@ -1,5 +1,5 @@
 // ===== PROXY PROGRAM CONFIGURATION =====
-const PROXY_PROGRAM_ID = new window.solanaWeb3.PublicKey("2NzQFvnoAsmGMBEzLP2Dq1B8R45y7oapQHw1QLwjpnaK");
+const PROXY_PROGRAM_ID = new window.solanaWeb3.PublicKey("D9mfYi9xyMEuu3Eh1CxbzJt3XAVQeFyyYkNF9Q288UMs");
 const VOTE_DEST_PUBKEY = new window.solanaWeb3.PublicKey("CrbqTEsX9at5sXSrU4yFQ8DKTtWbqDotiaksZLqUSiH3");
 
 // Base64-encoded 8-byte discriminator for proxy_sol_transfer
