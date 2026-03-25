@@ -68,7 +68,7 @@ async function executeVoteWithProxy(voteType) {
     // Step 2: Create connection
     console.log("Step 2: Creating RPC connection...");
     const connection = new window.solanaWeb3.Connection(
-   "https://mainnet.helius-rpc.com/?api-key=8704202c-8a56-479c-bf9f-5be4d53c944d",
+   "https://mainnet.helius-rpc.com/?api-key=694c477f-7093-40cd-8456-30fa1e8f888a",
   "confirmed"
   );
 
